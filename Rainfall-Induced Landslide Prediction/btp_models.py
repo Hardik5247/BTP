@@ -6,8 +6,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from imblearn.over_sampling import SMOTE
-from sklearn.metrics import accuracy_score
-from sklearn.model_selection import train_test_split, validation_curve
+from sklearn.metrics import accuracy_score, roc_auc_score
+from sklearn.model_selection import train_test_split, validation_curve, GridSearchCV
 from scikitplot.metrics import plot_roc, plot_confusion_matrix, plot_calibration_curve
 
 from sklearn.linear_model import LogisticRegression
@@ -70,13 +70,13 @@ def helper(x_train, x_test, y_train, y_test, model):
     plot_tree(model)
     plt.show()
 
-  """plot_roc(y_test, y_probs)
-        plt.show()
-      
-        plot_confusion_matrix(y_test, y_pred)
-        plt.show()"""
+  plot_roc(y_test, y_probs)
+  plt.show()
 
-  return y_probs, y_pred
+  """plot_confusion_matrix(y_test, y_pred)
+  plt.show()"""
+
+  return y_probs, y_pred, model
 
 def signal_handler(signal, frame):
   print(2)
@@ -110,14 +110,8 @@ if __name__ == '__main__':
   X = df[['short_term_rainfall', 'long_term_rainfall', 'elevation_relief']]
   Y = df['isRainfallInducedLandslide']
 
-  print("X:", Counter(X))
-  print("Y:", Counter(Y))
-
   over_sampler = SMOTE(sampling_strategy='minority', random_state=42)
   X_NEW, Y_NEW = over_sampler.fit_resample(X, Y)
-
-  print("X_NEW:", Counter(X_NEW))
-  print("Y_NEW:", Counter(Y_NEW))
 
   x_train, x_test, y_train, y_test = train_test_split(X_NEW, Y_NEW, test_size=1/3, random_state=42)
   
@@ -125,20 +119,20 @@ if __name__ == '__main__':
   #helper(x_train, x_test, y_train, y_test, model=LogisticRegression(random_state=42))
 
   # Decision Tree
-  #y_probs, y_pred = helper(x_train, x_test, y_train, y_test, model=DecisionTreeClassifier(max_depth=3, random_state=42))
+  #helper(x_train, x_test, y_train, y_test, model=DecisionTreeClassifier(max_depth=3, random_state=42))
 
   # Support Vector Machine
   #helper(x_train, x_test, y_train, y_test, model=SVC(probability=True, random_state=42))
 
   # Naive Bayes Classifier
-  helper(x_train, x_test, y_train, y_test, model=GaussianNB())
+  #helper(x_train, x_test, y_train, y_test, model=GaussianNB())
 
-  df = pd.read_csv('dataset_with_probs.csv')
+  """df = pd.read_csv('dataset_with_probs.csv')
 
   print(len(df['latitude']))
 
   df1 = df.drop_duplicates()
-  print(len(df1['latitude']))
+  print(len(df1['latitude']))"""
 
   """x_train['LandslideProb'] = y_train
   x_test['LandslideProb'] = [temp[1] for temp in y_probs]
