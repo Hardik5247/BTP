@@ -54,7 +54,7 @@ def plot_bar_chart(data, x_label, increment, cutoff, end):
 
   y_min, y_max = 0, max(values) + 100
   ax.set_ylim(y_min, y_max)
-  ax.set_yticks(range(y_min, y_max, 100))
+  ax.set_yticks(range(y_min, y_max, 50))
 
   plt.xlabel(x_label)
   plt.ylabel("Frequency")
@@ -66,15 +66,15 @@ def helper(x_train, x_test, y_train, y_test, model):
   print(f"Accuracy Score for model={model}:", acc)
   print()
 
-  if isinstance(model, DecisionTreeClassifier):
-    plot_tree(model)
-    plt.show()
+  """if isinstance(model, DecisionTreeClassifier):
+          plot_tree(model)
+          plt.show()"""
 
-  plot_roc(y_test, y_probs)
-  plt.show()
-
-  """plot_confusion_matrix(y_test, y_pred)
-  plt.show()"""
+  """plot_roc(y_test, y_probs)
+        plt.show()
+      
+        plot_confusion_matrix(y_test, y_pred)
+        plt.show()"""
 
   return y_probs, y_pred, model
 
@@ -100,14 +100,14 @@ if __name__ == '__main__':
   signal.signal(signal.SIGINT, signal_handler)
   signal.signal(signal.SIGTERM, signal_handler)
 
-  final_dataset_with_elevations = 'nasa_glc_india_final_elevation.csv'
+  final_dataset_with_elevations = 'nasa_glc_india_final_elevation_2.csv'
   df = pd.read_csv(final_dataset_with_elevations)
 
   #plot_bar_chart(df['short_term_rainfall'], "Short Term Rainfall (mm)", 50, 200, 400)
-  #plot_bar_chart(df['long_term_rainfall'], "Long Term Rainfall (mm)", 50, 600, 800)
+  #plot_bar_chart(df['long_term_rainfall'], "Long Term Rainfall (mm)", 50, 750, 1000)
   #plot_bar_chart(df['elevation_relief'], "Elevation Relief (m)", 500, 3201, 3200) # pass 'cutoff' more than 'end'
 
-  X = df[['short_term_rainfall', 'long_term_rainfall', 'elevation_relief']]
+  X = df[['short_term_rainfall', 'long_term_rainfall', 'elevation_relief', 'latitude', 'longitude']]
   Y = df['isRainfallInducedLandslide']
 
   over_sampler = SMOTE(sampling_strategy='minority', random_state=42)
@@ -119,7 +119,7 @@ if __name__ == '__main__':
   #helper(x_train, x_test, y_train, y_test, model=LogisticRegression(random_state=42))
 
   # Decision Tree
-  #helper(x_train, x_test, y_train, y_test, model=DecisionTreeClassifier(max_depth=3, random_state=42))
+  y_probs, y_pred, _ = helper(x_train, x_test, y_train, y_test, model=DecisionTreeClassifier(max_depth=3, random_state=42))
 
   # Support Vector Machine
   #helper(x_train, x_test, y_train, y_test, model=SVC(probability=True, random_state=42))
@@ -127,14 +127,9 @@ if __name__ == '__main__':
   # Naive Bayes Classifier
   #helper(x_train, x_test, y_train, y_test, model=GaussianNB())
 
-  """df = pd.read_csv('dataset_with_probs.csv')
+  df = pd.read_csv('dataset_with_probs.csv')
 
-  print(len(df['latitude']))
-
-  df1 = df.drop_duplicates()
-  print(len(df1['latitude']))"""
-
-  """x_train['LandslideProb'] = y_train
+  x_train['LandslideProb'] = y_train
   x_test['LandslideProb'] = [temp[1] for temp in y_probs]
   final = pd.concat([x_test, x_train])
-  final.to_csv('dataset_with_probs.csv', index=False)"""
+  final.to_csv('dataset_with_probs.csv', index=False)

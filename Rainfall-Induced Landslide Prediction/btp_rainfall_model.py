@@ -108,10 +108,15 @@ if __name__ == '__main__':
   cleaned_dataset_with_rainfall_path = 'nasa_glc_india_cleaned_rainfall.csv'
   final_dataset = 'nasa_glc_india_final.csv'
   final_dataset_with_elevations = 'nasa_glc_india_final_elevation.csv'
+  final_dataset_with_elevations_2 = 'nasa_glc_india_final_elevation_2.csv'
   non_rainfall_induced = 'nasa_glc_non_rainfall_induced.csv'
   rainfall_data_path = 'landslide_rainfall_data.json'
 
-  # df_rainfall = pd.read_csv()
+  df_rainfall = pd.read_csv(final_dataset_with_elevations)
+
+  df_rainfall['long_term_rainfall'] += df_rainfall['short_term_rainfall']
+
+  df_rainfall.to_csv(final_dataset_with_elevations_2, index=False)
 
   """length_transform = { 'exact': 0.03, '1km': 1.0, '5km': 5.0, '10km': 10.0 }
 
